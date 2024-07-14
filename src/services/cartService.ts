@@ -117,7 +117,7 @@ export const updateItemInCart = async ({
     p.product.toString() !== productId;
   });
 
-  console.log(otheCartItems);
+ 
   let total = otheCartItems.reduce((sum, product) => {
     sum += product.quantity * product.unitPrice;
     return sum;
@@ -130,3 +130,65 @@ export const updateItemInCart = async ({
 
   return { data: updatedCart, statusCode: 201 };
 };
+
+
+
+// delelet item in cart 
+
+interface DeleteItemInCart {
+  productId: string;
+ 
+  userId: string;
+}
+export const deleteItemInCart  = async({userId , productId}:DeleteItemInCart)=>{
+
+  if (!mongoose.Types.ObjectId.isValid(productId)) {
+    return { data: "Invalid Product ID", statusCode: 400 };
+  }
+
+  const cart = await getAcitveCartForUser({ userId });
+  if (!cart) {
+    return { data: "Cart Not Found!", statusCode: 404 };
+  }
+
+  const existInCart = cart.items.find(
+    (p) => p.product.toString() === productId.toString()
+  );
+  if (!existInCart) {
+    return { data: "Item does not  exists in Cart!", statusCode: 404 };
+  }
+  
+  const otheCartItems = cart.items.filter((p) => {
+    p.product.toString() !== productId;
+  });
+
+  let total = otheCartItems.reduce((sum, product) => {
+    sum += product.quantity * product.unitPrice;
+    return sum;
+  }, 0);
+cart.items=otheCartItems;
+  cart.totalAmount = total;
+  const updatedCart = await cart.save();
+
+  return { data: updatedCart, statusCode: 201 };  
+}
+
+
+
+// clear item cart 
+
+
+interface  ClearCart {
+ 
+  userId: string;
+}
+export const clearCart  = async({userId}:ClearCart)=>{
+
+ 
+  const cart = await getAcitveCartForUser({ userId });
+ cart.items=[];
+ cart.totalAmount=0;
+ const updatedCart = await cart.save();
+
+  return { data: updatedCart, statusCode: 200 };  
+}

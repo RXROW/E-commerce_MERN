@@ -1,5 +1,5 @@
 import express from "express";
-import { addItemToCart, getAcitveCartForUser, updateItemInCart } from "../services/cartService";
+import { addItemToCart, clearCart, deleteItemInCart, getAcitveCartForUser, updateItemInCart } from "../services/cartService";
 import validateJWT from "../middelwares/validateJWT";
 
 declare module "express-serve-static-core" {
@@ -13,6 +13,14 @@ router.get("/", validateJWT, async (req, res) => {
   const userId = req.user._id;
   const cart = await getAcitveCartForUser({ userId });
   res.status(200).send(cart);
+});
+
+
+// clear cart items 
+router.delete("/", validateJWT, async (req, res) => {
+  const userId = req.user._id;
+  const response = await clearCart({ userId  });
+  res.status(response.statusCode).send(response.data);
 });
 
 
@@ -32,5 +40,15 @@ router.put("/items", validateJWT, async (req, res) => {
   const response = await updateItemInCart({ userId ,productId ,quantity });
   res.status(response.statusCode).send(response.data);
 });
+
+router.delete("/items/:productId", validateJWT, async (req, res) => {
+  const userId = req.user._id;
+  const {productId } = req.params;
+  const response = await deleteItemInCart({ userId , productId });
+  res.status(response.statusCode).send(response.data);
+});
+
+
+
 
 export default router;
