@@ -5,8 +5,8 @@ const cartStatusEnum=["active","completed"]
 
 
 
-export interface ICartItem extends Document{
- product: IProduct;
+export interface ICartItem  {
+ product: any| ObjectId | IProduct;
  unitPrice:number;
  quantity:number;
 }

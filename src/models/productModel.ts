@@ -1,6 +1,7 @@
-import mongoose ,{Schema , Document } from "mongoose";
+import mongoose ,{Schema , Document, ObjectId } from "mongoose";
 
 export interface IProduct extends Document{
+  _id: ObjectId; // Assuming you're using MongoDB ObjectId
   title:string;
   image:string;
   price:number;
