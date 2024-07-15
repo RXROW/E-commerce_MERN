@@ -1,6 +1,7 @@
 import mongoose, { ObjectId } from "mongoose";
 import cartModel, { ICartItem } from "../models/cartModel";
 import productModel, { IProduct } from "../models/productModel";
+import orderModel, { IOrderItem } from "../models/orderModel";
 
 interface CreateCartForUser {
   userId: string;
@@ -184,7 +185,7 @@ interface  ClearCart {
 }
 export const clearCart  = async({userId}:ClearCart)=>{
 
- 
+
   const cart = await getAcitveCartForUser({ userId });
  cart.items=[];
  cart.totalAmount=0;
@@ -192,3 +193,65 @@ export const clearCart  = async({userId}:ClearCart)=>{
 
   return { data: updatedCart, statusCode: 200 };  
 }
+
+
+//checkout
+interface Checkout {
+  userId: string;
+  address: string;
+}
+
+export const checkout = async ({ userId, address }: Checkout) => {
+  if (!address) {
+    return { data: "Please Enter Your Address!", statusCode: 400 };
+  }
+
+  const cart = await getAcitveCartForUser({ userId });
+
+  // Check if the cart is retrieved correctly
+  if (!cart) {
+    return { data: "Cart not found!", statusCode: 404 };
+  }
+
+  const OrderItemsArr: IOrderItem[] = [];
+
+  // Loop through cart items and create order items
+  for (let item of cart.items) {
+    let product = await productModel.findById(item.product);
+
+    // Check if the product is retrieved correctly
+    if (!product) {
+      return { data: "Product Not Found!", statusCode: 404 };
+    }
+
+    const orderItem: IOrderItem = {
+      productTitle: product.title,
+      productImage: product.image,
+      unitPrice: item.unitPrice,
+      quantity: item.quantity,
+    };
+
+    OrderItemsArr.push(orderItem);
+  }
+
+  // Check the OrderItemsArr after the loop
+  if (OrderItemsArr.length === 0) {
+    return { data: "OrderItemsArr is empty after processing cart items!", statusCode: 500 };
+  }
+
+  const order = await orderModel.create({
+    orderItems: OrderItemsArr,  
+    userId,
+    total: cart.totalAmount,
+    address,
+  });
+
+  await order.save();
+
+  // Update cart status to complete
+  cart.status = "completed";
+  await cart.save();
+
+  return { data: order, statusCode: 200 };
+};
+
