@@ -5,6 +5,8 @@ export const getAllProducts = async () => {
 };
 
 export const seedInitialProducts = async () => {
+  try {
+    
   const products = [
     {
    
@@ -72,9 +74,13 @@ export const seedInitialProducts = async () => {
     },
    
   ];
-
   const exisistProduct = await getAllProducts();
   if (exisistProduct.length === 0) {
     await productModel.insertMany(products);
   }
+
+  } catch (error) {
+    console.log( "Can not See Database!!" , error);
+  }
+
 };

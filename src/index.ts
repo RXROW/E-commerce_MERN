@@ -1,9 +1,16 @@
+
+
+ 
+import dotenv  from "dotenv";
+
 import express  from "express";
 import   mongoose from "mongoose";
 import userRoute from "./routes/userRoute";
 import { seedInitialProducts } from "./services/productService";
 import productRoute from "./routes/productRoute";
 import cartRoute from "./routes/cartRoute";
+
+dotenv.config();
 
 const app =express();
 const port = 3001;
@@ -12,7 +19,7 @@ const port = 3001;
 app.use(express.json())
 
 
-mongoose.connect("mongodb://localhost:27017/ecommerce")
+mongoose.connect(process.env.BD_URL ||"")
 .then(()=>console.log("Mongo Connected (^_^) "))
 .catch((err)=>console.log("Filed Connection !" , err))
 

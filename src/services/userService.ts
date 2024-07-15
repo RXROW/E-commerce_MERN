@@ -49,6 +49,6 @@ return {  data : " Incorrect email or password ! " , statusCode:400}
 }
 
 const genrateJWT = (data : any)=>{
-return jwt.sign(data , "hVRbwZhFRxfr5rzmMP2f7AyCDZBrLjGZ"  );
+return jwt.sign(data ,process.env.JWT_SECRIT || ""  );
 }
 
