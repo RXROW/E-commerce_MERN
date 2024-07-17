@@ -11,7 +11,7 @@ import Avatar from '@mui/material/Avatar';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/auth/AuthContext';
 import { Button, Grid } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import Badge, { BadgeProps } from '@mui/material/Badge';
