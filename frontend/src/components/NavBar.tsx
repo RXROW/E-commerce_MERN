@@ -14,12 +14,11 @@ import AdbIcon from '@mui/icons-material/Adb';
 import { useAuth } from '../context/AuthContext';
 import { Button, Grid } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-
-const settings = ['Profile', 'Logout'];
+ 
 
 function NavBar() {
   const navigate = useNavigate();
-  const { username, isAuthenticated } = useAuth();
+  const { username, isAuthenticated ,logout } = useAuth();
 
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
@@ -44,6 +43,11 @@ function NavBar() {
     navigate('/login');
   };
 
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
+  
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
@@ -144,11 +148,11 @@ function NavBar() {
                   open={Boolean(anchorElUser)}
                   onClose={handleCloseUserMenu}
                 >
-                  {settings.map((setting) => (
-                    <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                      <Typography textAlign="center">{setting}</Typography>
+                 
+                    <MenuItem onClick={handleCloseUserMenu} >
+                      <Typography   onClick={handleLogout} textAlign="center">Logout</Typography>
                     </MenuItem>
-                  ))}
+             
                 </Menu>
               </Box>
             </>
