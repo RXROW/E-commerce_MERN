@@ -14,11 +14,13 @@ import AdbIcon from '@mui/icons-material/Adb';
 import { useAuth } from '../context/AuthContext';
 import { Button, Grid } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
- 
+import Badge, { BadgeProps } from '@mui/material/Badge';
+import { styled } from '@mui/material/styles';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 
 function NavBar() {
   const navigate = useNavigate();
-  const { username, isAuthenticated ,logout } = useAuth();
+  const { username, isAuthenticated, logout } = useAuth();
 
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
@@ -47,19 +49,28 @@ function NavBar() {
     logout();
     navigate('/');
   };
-  
+  const handleLogo = () => {
+ 
+    navigate('/');
+  };
+  const handleCart = () => {
+ 
+    navigate('/cart');
+  };
+
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
           <Typography
+          onClick={handleLogo}
             variant="h6"
             noWrap
             component="a"
             href="#app-bar-with-responsive-menu"
             sx={{
-              mr: 150,
+              mr: 2,
               display: { xs: 'none', md: 'flex' },
               fontFamily: 'monospace',
               fontWeight: 700,
@@ -100,6 +111,9 @@ function NavBar() {
                 display: { xs: 'block', md: 'none' },
               }}
             >
+              <MenuItem onClick={handleCloseNavMenu}>Home</MenuItem>
+              <MenuItem onClick={handleCloseNavMenu}>About</MenuItem>
+              <MenuItem onClick={handleCloseNavMenu}>Contact</MenuItem>
             </Menu>
           </Box>
           <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
@@ -107,6 +121,7 @@ function NavBar() {
             variant="h5"
             noWrap
             component="a"
+            onClick={handleLogo}
             href="#app-bar-with-responsive-menu"
             sx={{
               mr: 2,
@@ -119,8 +134,16 @@ function NavBar() {
               textDecoration: 'none',
             }}
           >
-            LOGO
+            Tech
           </Typography>
+          <Box sx={{ flexGrow: 1 }} />
+
+          <IconButton onClick={handleCart} sx={{ marginRight: "30px", color: "white" }} aria-label="cart">
+            <StyledBadge badgeContent={4} color='secondary'>
+              <ShoppingCartIcon />
+            </StyledBadge>
+          </IconButton>
+
           {isAuthenticated ? (
             <>
               <Typography sx={{ mr: 3 }}>{username}</Typography>
@@ -148,11 +171,9 @@ function NavBar() {
                   open={Boolean(anchorElUser)}
                   onClose={handleCloseUserMenu}
                 >
-                 
-                    <MenuItem onClick={handleCloseUserMenu} >
-                      <Typography   onClick={handleLogout} textAlign="center">Logout</Typography>
-                    </MenuItem>
-             
+                  <MenuItem onClick={handleLogout}>
+                    <Typography textAlign="center">Logout</Typography>
+                  </MenuItem>
                 </Menu>
               </Box>
             </>
@@ -166,3 +187,12 @@ function NavBar() {
 }
 
 export default NavBar;
+
+const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
+  '& .MuiBadge-badge': {
+    right: -3,
+    top: 13,
+    border: `2px solid ${theme.palette.background.paper}`,
+    padding: '0 4px',
+  },
+}));
