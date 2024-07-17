@@ -3,13 +3,11 @@ import ProductCard from "../components/ProductCard";
 import { Grid } from "@mui/material";
 import { useEffect, useState } from "react";
 
-
-interface Product{
-  id:string;
-  title:string;
-  image:string;
-  price:number;
- 
+interface Product {
+  id: string;
+  title: string;
+  image: string;
+  price: number;
 }
 
 const Home = () => {
@@ -20,13 +18,14 @@ const Home = () => {
       setProduct(data);
     });
   }, []);
+
   return (
     <>
       <Container sx={{ mt: 2 }}>
-        <Grid container  >
+        <Grid container spacing={2}>
           {product.map((p) => (
-            <Grid item sx={{ my: 2 }} md={4}>
-              <ProductCard  {...p} />
+            <Grid item xs={12} sm={6} md={4} key={p.id}>
+              <ProductCard {...p} />
             </Grid>
           ))}
         </Grid>

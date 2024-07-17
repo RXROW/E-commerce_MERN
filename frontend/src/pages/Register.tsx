@@ -1,8 +1,10 @@
 import React, { useRef, useState } from "react";
 import { Container, TextField, Button, Box, Typography } from "@mui/material";
 import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const Register = () => {
+  const navigate= useNavigate();
   const [error, setError] = useState("");
   const firstNameRef = useRef<HTMLInputElement>(null);
   const lastNameRef = useRef<HTMLInputElement>(null);
@@ -46,7 +48,7 @@ const {login} =useAuth();
       return;
     }
     login(email , token);
-    
+    navigate("/")
  
   };
 
