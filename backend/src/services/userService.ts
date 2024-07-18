@@ -1,6 +1,7 @@
 import userModel from "../models/userModel";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import orderModel from "../models/orderModel";
 
 interface RegisterParams{
   firstName:string;
@@ -48,6 +49,31 @@ return {  data : " Incorrect email or password ! " , statusCode:400}
 
 }
 
+
+
+
+
+
+interface GetMyOrdersParams {
+  userId: string;
+}
+
+export const getMyOrders = async ({ userId }: GetMyOrdersParams) => {
+  try {
+    // Fetch user by userId
+    const findUser = await userModel.findById(userId);
+    if (!findUser) {
+      return { data: "User not found", statusCode: 400 };
+    }
+
+    // Fetch orders by userId
+    const orders = await orderModel.find({ userId });
+
+    return { data: orders, statusCode: 200 };
+  } catch (error) {
+    return { data: "An error occurred while fetching orders", statusCode: 500 };
+  }
+};
 const genrateJWT = (data : any)=>{
 return jwt.sign(data ,process.env.JWT_SECRIT || ""  );
 }

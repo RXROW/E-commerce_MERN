@@ -18,8 +18,10 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/auth/AuthContext';
 import { useCart } from '../context/cart/CartContext';
+import { useNavigate } from 'react-router-dom';
 
 const Cart = () => {
+  const navigate= useNavigate();
   const { token } = useAuth();
   const { cartItems, setCartItems, totalAmount, setTotalAmount } = useCart();
   const [error, setError] = useState("");
@@ -105,6 +107,10 @@ const Cart = () => {
   };
 
   const handleUpdateQuantity = async (productId: string, quantity: number) => {
+    if (quantity <= 0) {
+      setError('Quantity must be greater than zero. To remove the item, use the delete option.');
+      return;
+    }
     try {
       const response = await fetch('http://localhost:3001/cart/items', {
         method: 'PUT',
@@ -129,13 +135,19 @@ const Cart = () => {
         price: item.unitPrice,
         quantity: item.quantity,
       }));
+     
       setCartItems(items);
       setTotalAmount(updatedCart.totalAmount);
     } catch (err) {
       setError('Failed to update quantity');
     }
   };
-  
+  const handleHomePage=()=>{
+    navigate("/");
+  }
+  const handleCheckout=()=>{
+    navigate("/checkout");
+  }
 
   return (
     <Container>
@@ -185,13 +197,13 @@ const Cart = () => {
         </Table>
       </TableContainer>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
-        <Button variant="contained" color="primary">
+        <Button variant="contained" onClick={handleHomePage} color="primary">
           Continue Shopping
         </Button>
         <Typography variant="h6">
           Total: ${totalAmount}
         </Typography>
-        <Button variant="contained" color="secondary">
+        <Button variant="contained" onClick={handleCheckout} color="secondary">
           Checkout
         </Button>
         <Button variant="contained" color="error" onClick={handleClearCart}>

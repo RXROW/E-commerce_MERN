@@ -21,7 +21,7 @@ import { useCart } from '../context/cart/CartContext';
 
 function NavBar() {
   const navigate = useNavigate();
-  const {cartItems}=useCart();
+  const { cartItems } = useCart();
   const { username, isAuthenticated, logout } = useAuth();
 
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
@@ -51,13 +51,17 @@ function NavBar() {
     logout();
     navigate('/');
   };
+
   const handleLogo = () => {
- 
     navigate('/');
   };
+
   const handleCart = () => {
- 
     navigate('/cart');
+  };
+
+  const handleMyOrders = () => {
+    navigate('/orders');
   };
 
   return (
@@ -66,7 +70,7 @@ function NavBar() {
         <Toolbar disableGutters>
           <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
           <Typography
-          onClick={handleLogo}
+            onClick={handleLogo}
             variant="h6"
             noWrap
             component="a"
@@ -95,28 +99,7 @@ function NavBar() {
             >
               <MenuIcon />
             </IconButton>
-            <Menu
-              id="menu-appbar"
-              anchorEl={anchorElNav}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'left',
-              }}
-              open={Boolean(anchorElNav)}
-              onClose={handleCloseNavMenu}
-              sx={{
-                display: { xs: 'block', md: 'none' },
-              }}
-            >
-              <MenuItem onClick={handleCloseNavMenu}>Home</MenuItem>
-              <MenuItem onClick={handleCloseNavMenu}>About</MenuItem>
-              <MenuItem onClick={handleCloseNavMenu}>Contact</MenuItem>
-            </Menu>
+           
           </Box>
           <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
           <Typography
@@ -173,6 +156,9 @@ function NavBar() {
                   open={Boolean(anchorElUser)}
                   onClose={handleCloseUserMenu}
                 >
+                  <MenuItem onClick={handleMyOrders}>
+                    <Typography textAlign="center">My Orders</Typography>
+                  </MenuItem>
                   <MenuItem onClick={handleLogout}>
                     <Typography textAlign="center">Logout</Typography>
                   </MenuItem>
