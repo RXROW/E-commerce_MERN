@@ -1,5 +1,5 @@
 import express from "express";
-import { addItemToCart, checkout, clearCart, deleteItemInCart, getAcitveCartForUser, updateItemInCart } from "../services/cartService";
+import { addItemToCart, checkout, clearCart, deleteItemInCart, getActiveCartForUser, updateItemInCart } from "../services/cartService";
 import validateJWT from "../middelwares/validateJWT";
 
 declare module "express-serve-static-core" {
@@ -11,7 +11,7 @@ const router = express.Router();
 
 router.get("/", validateJWT, async (req, res) => {
   const userId = req.user._id;
-  const cart = await getAcitveCartForUser({ userId });
+  const cart = await getActiveCartForUser({ userId ,populateProduct:true});
   res.status(200).send(cart);
 });
 

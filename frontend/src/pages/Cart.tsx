@@ -1,18 +1,29 @@
- 
-import { Container, Box, Typography, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton } from '@mui/material';
+import {
+  Container,
+  Box,
+  Typography,
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  IconButton,
+} from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { useState ,useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../context/auth/AuthContext';
- 
+import { useCart } from '../context/cart/CartContext';
 
 const Cart = () => {
-  const {token} =useAuth()
-  const [cart ,setCart]= useState();
-  const [error ,setError]= useState("");
-
+  const { token } = useAuth();
+  const { cartItems, setCartItems, totalAmount, setTotalAmount } = useCart();
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    if(!token){
+    if (!token) {
       return;
     }
     const fetchCart = async () => {
@@ -24,43 +35,60 @@ const Cart = () => {
           }
         });
         if (!response.ok) {
-         setError('Network response was not ok')
+          setError('Network response was not ok');
+          return;
         }
         const data = await response.json();
-        setCart(data);
+        const items = data.items.map((item: any) => ({
+          productId: item.product._id,
+          title: item.product.title,
+          image: item.product.image,
+          price: item.unitPrice,
+          quantity: item.quantity,
+        }));
+        setCartItems(items);
+        setTotalAmount(data.totalAmount);
       } catch (err) {
-        setError('Network response was  error' )
+        setError('Network response was error');
       }
     };
 
     fetchCart();
-  }, [token]);
+  }, [token, setCartItems, setTotalAmount]);
 
-
-
- 
-
- 
- 
-
-  console.log({cart});
-
-
-
-
-
-
-  const cartItems = [
-    { id: 1, name: 'Product 1', price: 10, quantity: 2, image: 'https://via.placeholder.com/50' },
-    { id: 2, name: 'Product 2', price: 15, quantity: 1, image: 'https://via.placeholder.com/50' },
-    { id: 3, name: 'Product 3', price: 20, quantity: 3, image: 'https://via.placeholder.com/50' },
-  ];
+  const handleDeleteItem = async (productId: string) => {
+    try {
+      const response = await fetch(`http://localhost:3001/cart/items/${productId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (!response.ok) {
+        setError('Failed to delete item');
+        return;
+      }
+      const updatedCart = await response.json();
+      const items = updatedCart.items.map((item: any) => ({
+        productId: item.product._id,
+        title: item.product.title,
+        image: item.product.image,
+        price: item.unitPrice,
+        quantity: item.quantity,
+      }));
+      setCartItems(items);
+      setTotalAmount(updatedCart.totalAmount);
+    } catch (err) {
+      setError('Failed to delete item');
+    }
+  };
 
   return (
     <Container>
       <Typography variant="h3" align='center' component="h1" sx={{ mt: 4, mb: 2 }}>
         Cart
       </Typography>
+      {error && <Typography color="error">{error}</Typography>}
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -68,24 +96,22 @@ const Cart = () => {
               <TableCell>Product</TableCell>
               <TableCell align="right">Price</TableCell>
               <TableCell align="right">Quantity</TableCell>
-              <TableCell align="right">Total</TableCell>
               <TableCell align="center">Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {cartItems.map((item) => (
-              <TableRow key={item.id}>
+              <TableRow key={item.productId}>
                 <TableCell>
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <img src={item.image} alt={item.name} style={{ width: 50, height: 50, marginRight: 10 }} />
-                    {item.name}
+                    <img src={item.image} alt={item.title} style={{ width: 50, height: 50, marginRight: 10 }} />
+                    {item.title}
                   </Box>
                 </TableCell>
                 <TableCell align="right">${item.price}</TableCell>
                 <TableCell align="right">{item.quantity}</TableCell>
-                <TableCell align="right">${item.price * item.quantity}</TableCell>
                 <TableCell align="center">
-                  <IconButton  >
+                  <IconButton onClick={() => handleDeleteItem(item.productId)}>
                     <DeleteIcon />
                   </IconButton>
                 </TableCell>
@@ -99,7 +125,7 @@ const Cart = () => {
           Continue Shopping
         </Button>
         <Typography variant="h6">
-          Total: $ 22
+          Total: ${totalAmount}
         </Typography>
         <Button variant="contained" color="secondary">
           Checkout

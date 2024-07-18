@@ -1,33 +1,28 @@
-import { createContext, useContext,   } from 'react';
+import React, { createContext, useContext } from 'react';
 
-export interface CartItems{
-  productId:string;
-  title:string;
-  qauntity:string;
-  unitprice:number;
-  productIamge:string;
-
-}
-interface CartContextType {
-  cartItems:CartItems[];
-  totalAmount:number;
-  addItemToCart:(productId:string)=>void;
-
- 
+export interface CartItem {
+  productId: string;
+  title: string;
+  image: string;
+  price: number;
+  quantity: number;
 }
 
-// Create AuthContext with default values that match the interface
-export const CartContext = createContext<CartContextType>({
- cartItems:[],
- totalAmount:0,
- addItemToCart:()=>{},
-});
+export interface CartContextType {
+  cartItems: CartItem[];
+  totalAmount: number;
+  addItemToCart: (productId: string) => void;
+  setCartItems: React.Dispatch<React.SetStateAction<CartItem[]>>;
+  setTotalAmount: React.Dispatch<React.SetStateAction<number>>;
+}
 
-// Custom hook to use the AuthContext
-export const useCart= () => {
+export const CartContext = createContext<CartContextType | undefined>(undefined);
+
+export const useCart = () => {
   const context = useContext(CartContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+  if (!context) {
+    throw new Error('useCart must be used within a CartProvider');
   }
   return context;
 };
+
